@@ -5,9 +5,10 @@ using System.Threading.Tasks;
 
 namespace MazeGenerator
 {
-  [Serializable]
-  public class MazePositions
+  public class MazeCell
   {
-    public List<Models.BlockPosition> maze { get; set; }
+    public int X { get; set; }
+    public int Y { get; set; }
+    public bool visited { get; set; } = false;
   }
 }

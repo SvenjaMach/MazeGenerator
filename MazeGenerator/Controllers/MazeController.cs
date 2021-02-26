@@ -1,9 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MazeGenerator.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace MazeGenerator.Controllers
 {
@@ -12,35 +10,57 @@ namespace MazeGenerator.Controllers
   public class WeatherForecastController : ControllerBase
   {
     private readonly ILogger<WeatherForecastController> _logger;
+    private readonly MazeContext _context;
 
-    public WeatherForecastController(ILogger<WeatherForecastController> logger)
+    public WeatherForecastController(ILogger<WeatherForecastController> logger, MazeContext context)
     {
       _logger = logger;
+      _context = context;
     }
 
     [HttpGet]
     public MazePositions Get()
     {
-      var rng = new Random();
-
       MazePositions cont = new MazePositions();
-      cont.maze = new List<BlockPosition>();
-
-      cont.maze.Add(
-        new BlockPosition
-        {
-          X=-3,
-          Y=-4
-        });
-
-      cont.maze.Add(
-      new BlockPosition
+      MazeGenerator gen = new MazeGenerator();
+      cont.maze = gen.generateMaze();
+      foreach(BlockPosition block in cont.maze)
       {
-        X = -4,
-        Y = -4
-      });
+        _context.BlockPositions.Add(block);
+      }
+      _context.SaveChanges();
 
       return cont;
+    }
+
+    [HttpPost]
+    public MazePositions POST(BoolHelper newMaze)
+    {
+      if (newMaze.isNewMaze)
+      {
+        _context.BlockPositions.RemoveRange(_context.BlockPositions);
+
+        MazePositions cont = new MazePositions();
+        MazeGenerator gen = new MazeGenerator();
+        cont.maze = gen.generateMaze();
+        foreach (BlockPosition block in cont.maze)
+        {
+          _context.BlockPositions.Add(block);
+        }
+
+        _context.SaveChanges();
+        return cont;
+      }
+      else
+      {
+        MazePositions cont = new MazePositions
+        {
+          maze = new System.Collections.Generic.List<BlockPosition>()
+        };
+        cont.maze = _context.BlockPositions.ToList();
+
+        return cont;
+      }
     }
   }
 }

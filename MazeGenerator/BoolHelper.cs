@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 
 namespace MazeGenerator
 {
-  [Serializable]
-  public class MazePositions
+  public class BoolHelper
   {
-    public List<Models.BlockPosition> maze { get; set; }
+    public bool isNewMaze { get; set; }
   }
 }
