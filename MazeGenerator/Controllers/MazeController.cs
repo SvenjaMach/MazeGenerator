@@ -7,34 +7,19 @@ namespace MazeGenerator.Controllers
 {
   [ApiController]
   [Route("[controller]")]
-  public class WeatherForecastController : ControllerBase
+  public class MazeGeneratorController : ControllerBase
   {
-    private readonly ILogger<WeatherForecastController> _logger;
+    private readonly ILogger<MazeGeneratorController> _logger;
     private readonly MazeContext _context;
 
-    public WeatherForecastController(ILogger<WeatherForecastController> logger, MazeContext context)
+    public MazeGeneratorController(ILogger<MazeGeneratorController> logger, MazeContext context)
     {
       _logger = logger;
       _context = context;
     }
 
-    [HttpGet]
-    public MazePositions Get()
-    {
-      MazePositions cont = new MazePositions();
-      MazeGenerator gen = new MazeGenerator();
-      cont.maze = gen.generateMaze();
-      foreach(BlockPosition block in cont.maze)
-      {
-        _context.BlockPositions.Add(block);
-      }
-      _context.SaveChanges();
-
-      return cont;
-    }
-
     [HttpPost]
-    public MazePositions POST(BoolHelper newMaze)
+    public MazePositions PostMaze(BoolHelper newMaze)
     {
       if (newMaze.isNewMaze)
       {
